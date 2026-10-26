@@ -90,7 +90,7 @@ export default function WellScanApp() {
 
   async function runOcr() {
     if (!file) { setStatus(lang === "ko" ? "먼저 라벨 사진을 선택해 주세요." : "Please select a label photo first."); return; }
-    setOcrBusy(true); setStatus("사진에서 글자를 추출하고 있어요. 라벨 언어에 따라 시간이 걸릴 수 있습니다.");
+    setOcrBusy(true); setStatus(lang === "ko" ? "사진에서 글자를 추출하고 있어요. 라벨 언어에 따라 시간이 걸릴 수 있습니다." : "Extracting text from the photo. This may take a moment depending on the label language.");
     try {
       // Tesseract downloads the selected trained-data models on first use; language availability depends on network/CDN access.
       const worker = await createWorker(ocrLanguage);
@@ -103,9 +103,9 @@ export default function WellScanApp() {
       } finally { await worker.terminate(); }
       setOcrText(recognizedText);
       setManualText(recognizedText);
-      setStatus(recognizedText ? `텍스트 추출 완료 · OCR 신뢰도 약 ${Math.round(confidence)}%` : "텍스트를 찾지 못했습니다. 선명한 사진을 올리거나 직접 입력해 주세요.");
+      setStatus(recognizedText ? (lang === "ko" ? `텍스트 추출 완료 · OCR 신뢰도 약 ${Math.round(confidence)}%` : `Text extracted · OCR confidence about ${Math.round(confidence)}%`) : (lang === "ko" ? "텍스트를 찾지 못했습니다. 선명한 사진을 올리거나 직접 입력해 주세요." : "No text found. Upload a clearer photo or enter the ingredients manually."));
     } catch (e) {
-      setStatus(`OCR에 실패했습니다. 원재료명을 직접 입력해 주세요. ${e instanceof Error ? e.message : ""}`);
+      setStatus(lang === "ko" ? `OCR에 실패했습니다. 원재료명을 직접 입력해 주세요. ${e instanceof Error ? e.message : ""}` : `OCR failed. Please enter the ingredients manually. ${e instanceof Error ? e.message : ""}`);
     } finally { setOcrBusy(false); }
   }
 
