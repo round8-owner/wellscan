@@ -1,27 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { createClient } from "@supabase/supabase-js";
 import type { AnalysisResult, ProfileId } from "@/lib/types";
 
 export const runtime = "nodejs";
 const allowedProfiles: ProfileId[] = ["general", "pregnant", "diabetes", "child", "nutrition", "allergy"];
 
-function getAdminDb() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) throw new Error("Supabase 환경변수가 설정되지 않았습니다.");
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-}
+const requestCounts = new Map<string, { count: number; start: number }>();
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get("authorization") || "";
-    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-    if (!token) return NextResponse.json({ error: "분석을 저장하려면 로그인해 주세요." }, { status: 401 });
-
-    const db = getAdminDb();
-    const { data: authData, error: authError } = await db.auth.getUser(token);
-    if (authError || !authData.user) return NextResponse.json({ error: "로그인 세션이 유효하지 않습니다." }, { status: 401 });
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const now = Date.now();
+    const current = requestCounts.get(ip);
+    if (current && now - current.start < 60_000 && current.count >= 12) {
+      return NextResponse.json({ error: "요청이 너무 많습니다. 1분 후 다시 시도해 주세요. / Too many requests. Please try again in one minute." }, { status: 429 });
+    }
+    if (!current || now - current.start >= 60_000) requestCounts.set(ip, { count: 1, start: now });
+    else requestCounts.set(ip, { count: current.count + 1, start: current.start });
 
     const body = await req.json();
     const text = typeof body.text === "string" ? body.text.trim() : "";
@@ -100,19 +95,8 @@ Include relevant ingredients rather than every ordinary ingredient. For allergen
       disclaimer: String(result.disclaimer || "This is informational guidance, not medical advice.").slice(0, 1500)
     };
 
-    const { data: scan, error: saveError } = await db.from("wellscan_scans").insert({
-      user_id: authData.user.id,
-      profile_id: profile,
-      source_text: text,
-      source_language: safeResult.detected_language,
-      output_language: outputLanguage === "English" ? "en" : "ko",
-      product_name: safeResult.product_name,
-      status: "completed",
-      result_json: safeResult
-    }).select("id").single();
-    if (saveError) console.error("Scan save error:", saveError.message);
 
-    return NextResponse.json({ result: safeResult, scanId: scan?.id ?? null, saved: !saveError });
+    return NextResponse.json({ result: safeResult, saved: false, message: "Guest mode: results are not saved to an account." });
   } catch (error) {
     console.error("WellScan analyze error:", error);
     return NextResponse.json({ error: error instanceof Error ? error.message : "분석 중 오류가 발생했습니다." }, { status: 500 });
