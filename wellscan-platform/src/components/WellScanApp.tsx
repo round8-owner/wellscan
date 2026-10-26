@@ -147,11 +147,11 @@ export default function WellScanApp() {
   const activeProfile = PROFILES.find(p => p.id === profile)!;
 
   return <div className="min-h-screen">
-    <header className="sticky top-0 z-20 border-b border-emerald-100 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-[#e5e9da] bg-white/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:px-6">
-        <a href="/" className="flex min-w-0 shrink-0 items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#eaf0dc] text-[#617a38] sm:h-10 sm:w-10"><Leaf size={22}/></span><span><strong className="block text-lg font-extrabold text-emerald-800">WellScan</strong><small className="muted hidden text-[10px] sm:block">INGREDIENT INTELLIGENCE</small></span></a>
+        <a href="/" className="flex min-w-0 shrink-0 items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#eaf0dc] text-[#617a38] sm:h-10 sm:w-10"><Leaf size={22}/></span><span><strong className="block text-lg font-extrabold text-[#536a2d]">WellScan</strong><small className="muted hidden text-[10px] sm:block">INGREDIENT INTELLIGENCE</small></span></a>
         <div className="flex items-center gap-2">
-          <Globe2 size={16} className="muted"/>
+          <Globe2 size={16} className="muted hidden sm:block"/>
           <select aria-label="UI language" className="field !w-auto max-w-[104px] !px-2 !py-2 text-xs sm:max-w-none sm:text-sm" value={lang} onChange={e => setLang(e.target.value as "ko"|"en")}><option value="ko">한국어</option><option value="en">English</option></select>
           {userEmail ? <span className="hidden max-w-40 truncate text-xs text-gray-500 sm:inline">{userEmail}</span> : <button className="btn btn-secondary !min-h-10 !px-2 !py-2 text-[11px] sm:!px-3 sm:text-xs" onClick={() => setAuthOpen(true)}>{copy.signIn}</button>}
         </div>
@@ -169,9 +169,9 @@ export default function WellScanApp() {
         </section>
 
         <section className="panel p-5 sm:p-6">
-          <div className="mb-4 flex items-start justify-between gap-3"><div><h2 className="text-lg font-extrabold">{copy.profile}</h2><p className="muted mt-1 text-xs">프로필은 분석 우선순위를 정합니다. 의료 진단을 대신하지 않습니다.</p></div><span className="rounded-xl bg-emerald-50 p-2 text-xl">{activeProfile.emoji}</span></div>
+          <div className="mb-4 flex items-start justify-between gap-3"><div><h2 className="text-lg font-extrabold">{copy.profile}</h2><p className="muted mt-1 text-xs">프로필은 분석 우선순위를 정합니다. 의료 진단을 대신하지 않습니다.</p></div><span className="rounded-xl bg-[#f4f7ee] p-2 text-xl">{activeProfile.emoji}</span></div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {PROFILES.map(p => <button key={p.id} onClick={() => setProfile(p.id)} className={`min-w-0 break-words rounded-xl border p-3 text-left transition ${profile === p.id ? "border-emerald-400 bg-emerald-50 ring-2 ring-emerald-100" : "border-gray-200 hover:border-emerald-200"}`}><span className="text-lg">{p.emoji}</span><strong className="mt-1 block text-sm">{p.title}</strong><small className="muted mt-1 block text-[11px] leading-relaxed">{p.description}</small></button>)}
+            {PROFILES.map(p => <button key={p.id} onClick={() => setProfile(p.id)} className={`min-w-0 break-words rounded-xl border p-3 text-left transition ${profile === p.id ? "border-[#9caf70] bg-[#f4f7ee] ring-2 ring-[#e5ebd8]" : "border-gray-200 hover:border-[#c9d5ad]"}`}><span className="text-lg">{p.emoji}</span><strong className="mt-1 block text-sm">{p.title}</strong><small className="muted mt-1 block text-[11px] leading-relaxed">{p.description}</small></button>)}
           </div>
           {profile === "allergy" && <div className="mt-4"><label className="label">알레르기 성분 (쉼표로 구분)</label><input className="field" value={allergies} onChange={e => setAllergies(e.target.value)} placeholder="예: 땅콩, 우유, 새우 / e.g. peanut, milk"/></div>}
         </section>
@@ -179,8 +179,8 @@ export default function WellScanApp() {
         <section className="panel p-5 sm:p-6">
           <h2 className="text-lg font-extrabold">1. 제품 라벨 촬영</h2><p className="muted mt-1 text-xs">원재료명과 영양정보가 선명하게 보이도록 촬영하세요. 최대 12MB.</p>
           <div className="mt-4 max-w-sm"><label className="label">라벨 원문 언어 / OCR language</label><select className="field" value={ocrLanguage} onChange={e => setOcrLanguage(e.target.value)}><option value="eng+kor">영어 + 한국어</option><option value="eng">영어</option><option value="tha">태국어</option><option value="jpn">일본어</option><option value="chi_sim">중국어 간체</option><option value="chi_tra">중국어 번체</option><option value="vie">베트남어</option><option value="spa">스페인어</option><option value="fra">프랑스어</option><option value="deu">독일어</option><option value="ind">인도네시아어</option><option value="msa">말레이어</option><option value="ara">아랍어</option><option value="ben">벵골어</option><option value="bul">불가리아어</option><option value="cat">카탈루냐어</option><option value="ces">체코어</option><option value="dan">덴마크어</option><option value="ell">그리스어</option><option value="fas">페르시아어</option><option value="fin">핀란드어</option><option value="heb">히브리어</option><option value="hin">힌디어</option><option value="hrv">크로아티아어</option><option value="hun">헝가리어</option><option value="ita">이탈리아어</option><option value="nld">네덜란드어</option><option value="nor">노르웨이어</option><option value="pol">폴란드어</option><option value="por">포르투갈어</option><option value="ron">루마니아어</option><option value="rus">러시아어</option><option value="swe">스웨덴어</option><option value="tam">타밀어</option><option value="tel">텔루구어</option><option value="tur">튀르키예어</option><option value="ukr">우크라이나어</option></select><p className="muted mt-1 text-xs">언어 모델은 최초 사용 시 다운로드됩니다. 혼합 언어·작은 글씨·반사된 포장에서는 OCR 결과를 직접 확인해 주세요.</p></div>
-          <label className="mt-4 flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-5 text-center hover:bg-emerald-50">
-            <Upload className="mb-2 text-emerald-700" size={25}/><strong className="text-sm">{copy.upload}</strong><span className="muted mt-1 text-xs">JPG, PNG, WEBP</span>
+          <label className="mt-4 flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#d8e2c4] bg-[#f4f7ee] p-5 text-center hover:bg-[#f4f7ee]">
+            <Upload className="mb-2 text-[#617a38]" size={25}/><strong className="text-sm">{copy.upload}</strong><span className="muted mt-1 text-xs">JPG, PNG, WEBP</span>
             <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={e => void chooseFile(e.target.files?.[0] || null)}/>
           </label>
           {preview && <div className="mt-4 grid grid-cols-[100px_1fr] gap-3 rounded-xl bg-gray-50 p-3"><img src={preview} alt="Product label preview" className="h-28 w-24 rounded-lg object-contain bg-white"/><div className="min-w-0"><strong className="block break-all text-sm">{file?.name}</strong><p className="muted mt-1 text-xs">{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : ""}</p><button onClick={() => void runOcr()} disabled={ocrBusy} className="btn btn-primary mt-3 !py-2 text-xs">{ocrBusy ? "글자 추출 중…" : <><FileText size={15}/>{copy.ocr}</>}</button></div></div>}
@@ -199,13 +199,13 @@ export default function WellScanApp() {
 
         {result && <section className="panel p-5 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="muted text-xs">ANALYSIS REPORT</p><h2 className="mt-1 text-xl font-extrabold">{result.product_name || (outputLanguage === "ko" ? "제품 분석 결과" : "Product analysis")}</h2></div><span className={`tag ${result.needs_user_review ? "tag-caution" : "tag-info"}`}>{result.needs_user_review ? "확인 필요 / Review" : "참고 결과 / Informational"}</span></div>
-          <p className="mt-4 rounded-xl bg-emerald-50 p-4 text-sm leading-relaxed text-emerald-950">{result.overall_summary}</p>
+          <p className="mt-4 rounded-xl bg-[#f4f7ee] p-4 text-sm leading-relaxed text-[#28321d]">{result.overall_summary}</p>
           <div className="mt-4 flex items-center justify-between"><h3 className="font-extrabold">성분별 결과 / Ingredient findings</h3><span className="muted text-xs">{result.ingredients.length} items</span></div>
           <div className="mt-3 space-y-3">
             {result.ingredients.map((item, i) => <article key={`${item.original_name}-${i}`} className="rounded-xl border border-gray-200 p-4">
               <div className="flex flex-wrap items-start justify-between gap-2"><div><strong>{item.normalized_name}</strong><p className="muted mt-1 text-xs">원문 / Original: {item.original_name}</p></div><span className={`tag ${item.level === "high_caution" ? "tag-high" : item.level === "caution" ? "tag-caution" : item.level === "unknown" ? "tag-unknown" : "tag-info"}`}>{item.level}</span></div>
               <p className="mt-3 text-sm leading-relaxed">{item.reason}</p>
-              {item.profile_relevance && <p className="mt-2 text-xs leading-relaxed text-emerald-800">프로필 관련성 / Relevance: {item.profile_relevance}</p>}
+              {item.profile_relevance && <p className="mt-2 text-xs leading-relaxed text-[#536a2d]">프로필 관련성 / Relevance: {item.profile_relevance}</p>}
               {item.evidence_note && <p className="muted mt-2 text-xs leading-relaxed">근거·한계 / Evidence: {item.evidence_note}</p>}
             </article>)}
             {!result.ingredients.length && <p className="muted rounded-xl bg-gray-50 p-4 text-sm">검토할 성분을 특정하지 못했습니다. OCR 텍스트를 수정하거나 원재료를 직접 입력해 주세요.</p>}
@@ -217,23 +217,23 @@ export default function WellScanApp() {
 
       <aside className="min-w-0 space-y-4 sm:space-y-5">
         <section className="panel p-5">
-          <div className="flex items-center gap-2"><ShieldCheck className="text-emerald-700" size={20}/><h2 className="font-extrabold">분석 원칙</h2></div>
+          <div className="flex items-center gap-2"><ShieldCheck className="text-[#617a38]" size={20}/><h2 className="font-extrabold">분석 원칙</h2></div>
           <ul className="mt-4 space-y-3 text-sm leading-relaxed">
-            <li className="flex gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-emerald-600" size={16}/><span>제품 원문과 표준 성분명을 구분해 표시</span></li>
-            <li className="flex gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-emerald-600" size={16}/><span>모르는 성분은 확정 판정 대신 추가 확인으로 표시</span></li>
-            <li className="flex gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-emerald-600" size={16}/><span>성분 존재와 실제 위험도는 별개로 설명</span></li>
-            <li className="flex gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-emerald-600" size={16}/><span>한국어·영어 결과 선택 가능</span></li>
+            <li className="flex gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-[#809b45]" size={16}/><span>제품 원문과 표준 성분명을 구분해 표시</span></li>
+            <li className="flex gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-[#809b45]" size={16}/><span>모르는 성분은 확정 판정 대신 추가 확인으로 표시</span></li>
+            <li className="flex gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-[#809b45]" size={16}/><span>성분 존재와 실제 위험도는 별개로 설명</span></li>
+            <li className="flex gap-2"><CheckCircle2 className="mt-0.5 shrink-0 text-[#809b45]" size={16}/><span>한국어·영어 결과 선택 가능</span></li>
           </ul>
         </section>
 
         <section className="panel p-5">
-          <div className="flex items-center justify-between"><h2 className="font-extrabold">{copy.history}</h2><button onClick={() => setActiveTab(activeTab === "history" ? "scan" : "history")} className="text-xs font-bold text-emerald-700">모두 보기 <ChevronRight size={14} className="inline"/></button></div>
-          {!token ? <p className="muted mt-3 text-sm">로그인하면 분석 기록을 안전하게 저장하고 여러 기기에서 확인할 수 있습니다.</p> : history.length === 0 ? <p className="muted mt-3 text-sm">{copy.noHistory}</p> : <div className="mt-3 space-y-3">{history.slice(0, 4).map(row => <button key={row.id} onClick={() => { if (row.result_json) setResult(row.result_json); setActiveTab("scan"); }} className="block w-full rounded-xl bg-gray-50 p-3 text-left hover:bg-emerald-50"><span className="block truncate text-sm font-bold">{row.product_name || "제품 분석"}</span><span className="muted mt-1 flex items-center gap-1 text-[11px]"><Clock3 size={12}/>{new Date(row.created_at).toLocaleString()}</span></button>)}</div>}
+          <div className="flex items-center justify-between"><h2 className="font-extrabold">{copy.history}</h2><button onClick={() => setActiveTab(activeTab === "history" ? "scan" : "history")} className="text-xs font-bold text-[#617a38]">모두 보기 <ChevronRight size={14} className="inline"/></button></div>
+          {!token ? <p className="muted mt-3 text-sm">로그인하면 분석 기록을 안전하게 저장하고 여러 기기에서 확인할 수 있습니다.</p> : history.length === 0 ? <p className="muted mt-3 text-sm">{copy.noHistory}</p> : <div className="mt-3 space-y-3">{history.slice(0, 4).map(row => <button key={row.id} onClick={() => { if (row.result_json) setResult(row.result_json); setActiveTab("scan"); }} className="block w-full rounded-xl bg-gray-50 p-3 text-left hover:bg-[#f4f7ee]"><span className="block truncate text-sm font-bold">{row.product_name || "제품 분석"}</span><span className="muted mt-1 flex items-center gap-1 text-[11px]"><Clock3 size={12}/>{new Date(row.created_at).toLocaleString()}</span></button>)}</div>}
         </section>
 
         <section className="panel p-5">
-          <div className="flex items-center gap-2"><UserRound size={18} className="text-emerald-700"/><h2 className="font-extrabold">{copy.account}</h2></div>
-          {userEmail ? <><p className="mt-3 break-all text-sm">{userEmail}</p><button onClick={() => void logout()} className="btn btn-ghost mt-3 w-full text-sm"><LogOut size={15}/>{copy.logout}</button><a href="/admin" className="mt-3 block text-center text-xs font-bold text-emerald-700">관리자 화면 열기 →</a></> : <><p className="muted mt-2 text-sm">분석 기록을 저장하려면 계정이 필요합니다.</p><button onClick={() => setAuthOpen(true)} className="btn btn-primary mt-3 w-full">{copy.signIn}</button></>}
+          <div className="flex items-center gap-2"><UserRound size={18} className="text-[#617a38]"/><h2 className="font-extrabold">{copy.account}</h2></div>
+          {userEmail ? <><p className="mt-3 break-all text-sm">{userEmail}</p><button onClick={() => void logout()} className="btn btn-ghost mt-3 w-full text-sm"><LogOut size={15}/>{copy.logout}</button><a href="/admin" className="mt-3 block text-center text-xs font-bold text-[#617a38]">관리자 화면 열기 →</a></> : <><p className="muted mt-2 text-sm">분석 기록을 저장하려면 계정이 필요합니다.</p><button onClick={() => setAuthOpen(true)} className="btn btn-primary mt-3 w-full">{copy.signIn}</button></>}
         </section>
         <p className="muted px-1 text-[11px] leading-relaxed">{copy.disclaimer}</p>
       </aside>
