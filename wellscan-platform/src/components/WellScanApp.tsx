@@ -148,30 +148,30 @@ export default function WellScanApp() {
 
   return <div className="min-h-screen">
     <header className="sticky top-0 z-20 border-b border-emerald-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <a href="/" className="flex items-center gap-2"><span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700"><Leaf size={22}/></span><span><strong className="block text-lg font-extrabold text-emerald-800">WellScan</strong><small className="muted block text-[10px]">INGREDIENT INTELLIGENCE</small></span></a>
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:px-6">
+        <a href="/" className="flex min-w-0 shrink-0 items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#eaf0dc] text-[#617a38] sm:h-10 sm:w-10"><Leaf size={22}/></span><span><strong className="block text-lg font-extrabold text-emerald-800">WellScan</strong><small className="muted hidden text-[10px] sm:block">INGREDIENT INTELLIGENCE</small></span></a>
         <div className="flex items-center gap-2">
           <Globe2 size={16} className="muted"/>
-          <select aria-label="UI language" className="field !w-auto !py-2 text-sm" value={lang} onChange={e => setLang(e.target.value as "ko"|"en")}><option value="ko">한국어</option><option value="en">English</option></select>
-          {userEmail ? <span className="hidden max-w-40 truncate text-xs text-gray-500 sm:inline">{userEmail}</span> : <button className="btn btn-secondary !px-3 !py-2 text-xs" onClick={() => setAuthOpen(true)}>{copy.signIn}</button>}
+          <select aria-label="UI language" className="field !w-auto max-w-[104px] !px-2 !py-2 text-xs sm:max-w-none sm:text-sm" value={lang} onChange={e => setLang(e.target.value as "ko"|"en")}><option value="ko">한국어</option><option value="en">English</option></select>
+          {userEmail ? <span className="hidden max-w-40 truncate text-xs text-gray-500 sm:inline">{userEmail}</span> : <button className="btn btn-secondary !min-h-10 !px-2 !py-2 text-[11px] sm:!px-3 sm:text-xs" onClick={() => setAuthOpen(true)}>{copy.signIn}</button>}
         </div>
       </div>
     </header>
 
-    <main className="mx-auto grid max-w-6xl gap-5 px-4 py-6 sm:px-6 lg:grid-cols-[1fr_360px] lg:py-10">
-      <div className="space-y-5">
-        <section className="rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-700 p-6 text-white sm:p-8">
-          <div className="mb-4 inline-flex rounded-2xl bg-white/15 p-3"><Camera size={26}/></div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[.18em] text-emerald-100">AI-powered label reader</p>
+    <main className="mx-auto grid w-full min-w-0 max-w-6xl grid-cols-1 gap-4 px-3 py-4 sm:gap-5 sm:px-6 sm:py-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:py-10">
+      <div className="min-w-0 space-y-4 sm:space-y-5">
+        <section className="min-w-0 rounded-3xl bg-[#eaf0dc] p-5 text-[#28321d] sm:p-8">
+          <div className="mb-4 inline-flex rounded-2xl bg-white p-3 text-[#617a38] shadow-sm"><Camera size={24}/></div>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[.16em] text-[#65754c]">AI-powered label reader</p>
           <h1 className="max-w-xl text-2xl font-extrabold leading-tight sm:text-3xl">{copy.title}</h1>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-emerald-50">{copy.subtitle}</p>
-          <div className="mt-5 flex flex-wrap gap-2 text-xs"><span className="rounded-full bg-white/15 px-3 py-1.5">OCR</span><span className="rounded-full bg-white/15 px-3 py-1.5">Multilingual normalization</span><span className="rounded-full bg-white/15 px-3 py-1.5">Personalized insights</span></div>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#4e5b3d]">{copy.subtitle}</p>
+          <div className="mt-5 flex flex-wrap gap-2 text-xs"><span className="rounded-full bg-white px-3 py-1.5 text-[#536a2d]">OCR</span><span className="rounded-full bg-white px-3 py-1.5 text-[#536a2d]">Multilingual normalization</span><span className="rounded-full bg-white px-3 py-1.5 text-[#536a2d]">Personalized insights</span></div>
         </section>
 
         <section className="panel p-5 sm:p-6">
           <div className="mb-4 flex items-start justify-between gap-3"><div><h2 className="text-lg font-extrabold">{copy.profile}</h2><p className="muted mt-1 text-xs">프로필은 분석 우선순위를 정합니다. 의료 진단을 대신하지 않습니다.</p></div><span className="rounded-xl bg-emerald-50 p-2 text-xl">{activeProfile.emoji}</span></div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {PROFILES.map(p => <button key={p.id} onClick={() => setProfile(p.id)} className={`rounded-xl border p-3 text-left transition ${profile === p.id ? "border-emerald-400 bg-emerald-50 ring-2 ring-emerald-100" : "border-gray-200 hover:border-emerald-200"}`}><span className="text-lg">{p.emoji}</span><strong className="mt-1 block text-sm">{p.title}</strong><small className="muted mt-1 block text-[11px] leading-relaxed">{p.description}</small></button>)}
+            {PROFILES.map(p => <button key={p.id} onClick={() => setProfile(p.id)} className={`min-w-0 break-words rounded-xl border p-3 text-left transition ${profile === p.id ? "border-emerald-400 bg-emerald-50 ring-2 ring-emerald-100" : "border-gray-200 hover:border-emerald-200"}`}><span className="text-lg">{p.emoji}</span><strong className="mt-1 block text-sm">{p.title}</strong><small className="muted mt-1 block text-[11px] leading-relaxed">{p.description}</small></button>)}
           </div>
           {profile === "allergy" && <div className="mt-4"><label className="label">알레르기 성분 (쉼표로 구분)</label><input className="field" value={allergies} onChange={e => setAllergies(e.target.value)} placeholder="예: 땅콩, 우유, 새우 / e.g. peanut, milk"/></div>}
         </section>
@@ -215,7 +215,7 @@ export default function WellScanApp() {
         </section>}
       </div>
 
-      <aside className="space-y-5">
+      <aside className="min-w-0 space-y-4 sm:space-y-5">
         <section className="panel p-5">
           <div className="flex items-center gap-2"><ShieldCheck className="text-emerald-700" size={20}/><h2 className="font-extrabold">분석 원칙</h2></div>
           <ul className="mt-4 space-y-3 text-sm leading-relaxed">
