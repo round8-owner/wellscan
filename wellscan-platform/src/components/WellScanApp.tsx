@@ -83,13 +83,13 @@ export default function WellScanApp() {
     setFile(next); setResult(null); setOcrText(""); setStatus("");
     if (preview) URL.revokeObjectURL(preview);
     if (!next) { setPreview(""); return; }
-    if (!next.type.startsWith("image/")) { setStatus("이미지 파일을 선택해 주세요."); setFile(null); return; }
-    if (next.size > 12 * 1024 * 1024) { setStatus("이미지는 12MB 이하로 선택해 주세요."); setFile(null); return; }
+    if (!next.type.startsWith("image/")) { setStatus(lang === "ko" ? "이미지 파일을 선택해 주세요." : "Please select an image file."); setFile(null); return; }
+    if (next.size > 12 * 1024 * 1024) { setStatus(lang === "ko" ? "이미지는 12MB 이하로 선택해 주세요." : "Please choose an image smaller than 12 MB."); setFile(null); return; }
     setPreview(URL.createObjectURL(next));
   }
 
   async function runOcr() {
-    if (!file) { setStatus("먼저 라벨 사진을 선택해 주세요."); return; }
+    if (!file) { setStatus(lang === "ko" ? "먼저 라벨 사진을 선택해 주세요." : "Please select a label photo first."); return; }
     setOcrBusy(true); setStatus("사진에서 글자를 추출하고 있어요. 라벨 언어에 따라 시간이 걸릴 수 있습니다.");
     try {
       // Tesseract downloads the selected trained-data models on first use; language availability depends on network/CDN access.
@@ -111,7 +111,7 @@ export default function WellScanApp() {
 
   async function analyze() {
     const ingredients = manualText.trim();
-    if (!ingredients) { setStatus("원재료명을 입력하거나 사진에서 글자를 추출해 주세요."); return; }
+    if (!ingredients) { setStatus(lang === "ko" ? "원재료명을 입력하거나 사진에서 글자를 추출해 주세요." : "Enter ingredients or extract text from a photo."); return; }
     setAnalyzeBusy(true); setStatus(lang === "ko" ? "성분을 정리하고 분석 중입니다…" : "Normalizing ingredients and analyzing…"); setResult(null);
     try {
       const response = await fetch("/api/analyze", {
@@ -122,9 +122,9 @@ export default function WellScanApp() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "분석에 실패했습니다.");
       setResult(data.result as AnalysisResult);
-      setStatus("분석이 완료되었습니다. 검출 결과와 불확실성 안내를 확인해 주세요.");
+      setStatus(lang === "ko" ? "분석이 완료되었습니다. 검출 결과와 불확실성 안내를 확인해 주세요." : "Analysis complete. Review the findings and uncertainty notes.");
       // Guest mode: results are shown in this session and are not saved to an account.
-    } catch (e) { setStatus(e instanceof Error ? e.message : "분석 중 오류가 발생했습니다."); }
+    } catch (e) { setStatus(e instanceof Error ? e.message : (lang === "ko" ? "분석 중 오류가 발생했습니다." : "An error occurred during analysis.")); }
     finally { setAnalyzeBusy(false); }
   }
 
@@ -170,9 +170,9 @@ export default function WellScanApp() {
         <section className="panel p-5 sm:p-6">
           <div className="mb-4 flex items-start justify-between gap-3"><div><h2 className="text-lg font-extrabold">{copy.profile}</h2><p className="muted mt-1 text-xs">{lang === "ko" ? "프로필은 분석 우선순위를 정합니다. 의료 진단을 대신하지 않습니다." : "Your profile guides the analysis; it does not replace medical advice."}</p></div><span className="rounded-xl bg-[#f4f7ee] p-2 text-xl">{activeProfile.emoji}</span></div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {PROFILES.map(p => <button key={p.id} onClick={() => setProfile(p.id)} className={`min-w-0 break-words rounded-xl border p-3 text-left transition ${profile === p.id ? "border-[#9caf70] bg-[#f4f7ee] ring-2 ring-[#e5ebd8]" : "border-gray-200 hover:border-[#c9d5ad]"}`}><span className="text-lg">{p.emoji}</span><strong className="mt-1 block text-sm">{p.title}</strong><small className="muted mt-1 block text-[11px] leading-relaxed">{p.description}</small></button>)}
+            {PROFILES.map(p => <button key={p.id} onClick={() => setProfile(p.id)} className={`min-w-0 break-words rounded-xl border p-3 text-left transition ${profile === p.id ? "border-[#9caf70] bg-[#f4f7ee] ring-2 ring-[#e5ebd8]" : "border-gray-200 hover:border-[#c9d5ad]"}`}><span className="text-lg">{p.emoji}</span><strong className="mt-1 block text-sm">{lang === "ko" ? p.title : ({ general: "General", pregnant: "Pregnancy considerations", diabetes: "Blood sugar", child: "Children’s food", nutrition: "Nutrition", allergy: "Allergy check" } as Record<ProfileId, string>)[p.id]}</strong><small className="muted mt-1 block text-[11px] leading-relaxed">{lang === "ko" ? p.description : ({ general: "Key nutrition and ingredient information", pregnant: "Ingredients to discuss with a clinician", diabetes: "Sugars, carbohydrates, and sweeteners", child: "Allergens and age-related considerations", nutrition: "Sugar, saturated fat, and sodium", allergy: "Ingredients you identify as allergens" } as Record<ProfileId, string>)[p.id]}</small></button>)}
           </div>
-          {profile === "allergy" && <div className="mt-4"><label className="label">알레르기 성분 (쉼표로 구분)</label><input className="field" value={allergies} onChange={e => setAllergies(e.target.value)} placeholder="예: 땅콩, 우유, 새우 / e.g. peanut, milk"/></div>}
+          {profile === "allergy" && <div className="mt-4"><label className="label">{lang === "ko" ? "알레르기 성분 (쉼표로 구분)" : "Allergens (separated by commas)"}</label><input className="field" value={allergies} onChange={e => setAllergies(e.target.value)} placeholder={lang === "ko" ? "예: 땅콩, 우유, 새우" : "e.g. peanut, milk, shrimp"}/></div>}
         </section>
 
         <section className="panel p-5 sm:p-6">
@@ -187,7 +187,7 @@ export default function WellScanApp() {
         </section>
 
         <section className="panel p-5 sm:p-6">
-          <div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-extrabold">2. {copy.manual}</h2><span className="tag tag-info">{lang === "ko" ? "원문 보존" : "Original text preserved"}</span></div>
+          <div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-extrabold">2. {lang === "ko" ? copy.manual : "Ingredient text"}</h2><span className="tag tag-info">{lang === "ko" ? "원문 보존" : "Original text preserved"}</span></div>
           <textarea className="field min-h-40 resize-y text-sm leading-relaxed" value={manualText} onChange={e => setManualText(e.target.value)} placeholder={lang === "ko" ? "OCR 결과가 여기에 표시됩니다. 직접 붙여 넣거나 수정할 수 있습니다." : "OCR text appears here. You can paste or edit the ingredients."}/>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div><label className="label">{copy.output}</label><select className="field" value={outputLanguage} onChange={e => setOutputLanguage(e.target.value as "ko"|"en")}><option value="ko">{copy.korean}</option><option value="en">{copy.english}</option></select></div>
@@ -202,12 +202,12 @@ export default function WellScanApp() {
           <div className="mt-4 flex items-center justify-between"><h3 className="font-extrabold">{lang === "ko" ? "성분별 결과" : "Ingredient findings"}</h3><span className="muted text-xs">{result.ingredients.length} items</span></div>
           <div className="mt-3 space-y-3">
             {result.ingredients.map((item, i) => <article key={`${item.original_name}-${i}`} className="rounded-xl border border-gray-200 p-4">
-              <div className="flex flex-wrap items-start justify-between gap-2"><div><strong>{item.normalized_name}</strong><p className="muted mt-1 text-xs">{lang === "ko" ? "원문" : "Original"}: {item.original_name}</p></div><span className={`tag ${item.level === "high_caution" ? "tag-high" : item.level === "caution" ? "tag-caution" : item.level === "unknown" ? "tag-unknown" : "tag-info"}`}>{item.level}</span></div>
+              <div className="flex flex-wrap items-start justify-between gap-2"><div><strong>{item.normalized_name}</strong><p className="muted mt-1 text-xs">{lang === "ko" ? "원문" : "Original"}: {item.original_name}</p></div><span className={`tag ${item.level === "high_caution" ? "tag-high" : item.level === "caution" ? "tag-caution" : item.level === "unknown" ? "tag-unknown" : "tag-info"}`}>{lang === "ko" ? ({ info: "정보", caution: "주의", high_caution: "높은 주의", unknown: "확인 필요" } as Record<string, string>)[item.level] || "확인 필요" : ({ info: "Info", caution: "Caution", high_caution: "High caution", unknown: "Unknown" } as Record<string, string>)[item.level] || "Unknown"}</span></div>
               <p className="mt-3 text-sm leading-relaxed">{item.reason}</p>
               {item.profile_relevance && <p className="mt-2 text-xs leading-relaxed text-[#536a2d]">{lang === "ko" ? "프로필 관련성" : "Profile relevance"}: {item.profile_relevance}</p>}
               {item.evidence_note && <p className="muted mt-2 text-xs leading-relaxed">{lang === "ko" ? "근거·한계" : "Evidence & limitations"}: {item.evidence_note}</p>}
             </article>)}
-            {!result.ingredients.length && <p className="muted rounded-xl bg-gray-50 p-4 text-sm">검토할 성분을 특정하지 못했습니다. OCR 텍스트를 수정하거나 원재료를 직접 입력해 주세요.</p>}
+            {!result.ingredients.length && <p className="muted rounded-xl bg-gray-50 p-4 text-sm">{lang === "ko" ? "검토할 성분을 특정하지 못했습니다. OCR 텍스트를 수정하거나 원재료를 직접 입력해 주세요." : "No ingredients could be identified. Edit the OCR text or enter the ingredients manually."}</p>}
           </div>
           {result.uncertainty_notes?.length > 0 && <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4"><strong className="text-sm">{lang === "ko" ? "불확실성 및 추가 확인" : "Uncertainties & follow-up checks"}</strong><ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-relaxed">{result.uncertainty_notes.map((n, i) => <li key={i}>{n}</li>)}</ul></div>}
           <p className="muted mt-4 border-t border-gray-100 pt-4 text-xs leading-relaxed">{result.disclaimer}</p>
@@ -238,7 +238,7 @@ export default function WellScanApp() {
       </aside>
     </main>
 
-    {activeTab === "history" && <div className="fixed inset-0 z-30 overflow-y-auto bg-black/40 p-4" onClick={() => setActiveTab("scan")}><div className="mx-auto mt-16 max-w-xl rounded-2xl bg-white p-5" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between"><h2 className="text-lg font-extrabold">분석 기록</h2><button onClick={() => setActiveTab("scan")}><X/></button></div>{history.length === 0 ? <p className="muted py-8 text-center text-sm">{copy.noHistory}</p> : <div className="mt-4 space-y-2">{history.map(row => <div key={row.id} className="rounded-xl border border-gray-200 p-3"><strong className="text-sm">{row.product_name || "제품 분석"}</strong><p className="muted mt-1 text-xs">{new Date(row.created_at).toLocaleString()} · {row.profile_id}</p></div>)}</div>}</div></div>}
+    {activeTab === "history" && <div className="fixed inset-0 z-30 overflow-y-auto bg-black/40 p-4" onClick={() => setActiveTab("scan")}><div className="mx-auto mt-16 max-w-xl rounded-2xl bg-white p-5" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between"><h2 className="text-lg font-extrabold">분석 기록</h2><button onClick={() => setActiveTab("scan")}><X/></button></div>{history.length === 0 ? <p className="muted py-8 text-center text-sm">{copy.noHistory}</p> : <div className="mt-4 space-y-2">{history.map(row => <div key={row.id} className="rounded-xl border border-gray-200 p-3"><strong className="text-sm">{row.product_name || (lang === "ko" ? "제품 분석" : "Product analysis")}</strong><p className="muted mt-1 text-xs">{new Date(row.created_at).toLocaleString()} · {lang === "ko" ? row.profile_id : ({ general: "General", pregnant: "Pregnancy", diabetes: "Blood sugar", child: "Children", nutrition: "Nutrition", allergy: "Allergy" } as Record<ProfileId, string>)[row.profile_id]}</p></div>)}</div>}</div></div>}
 
     {authOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setAuthOpen(false)}><div className="w-full max-w-sm rounded-3xl bg-white p-6" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between"><h2 className="text-xl font-extrabold">WellScan 계정</h2><button onClick={() => setAuthOpen(false)}><X/></button></div><p className="muted mt-2 text-sm">분석 기록을 저장하고 다시 확인할 수 있습니다.</p><form className="mt-5 space-y-3" onSubmit={e => { e.preventDefault(); void auth("signin"); }}><div><label className="label">이메일</label><input type="email" required className="field" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"/></div><div><label className="label">비밀번호 (최소 6자)</label><input type="password" required minLength={6} className="field" value={password} onChange={e => setPassword(e.target.value)}/></div><button disabled={authBusy} className="btn btn-primary w-full">{authBusy ? "처리 중…" : "로그인"}</button><button type="button" disabled={authBusy} onClick={() => void auth("signup")} className="btn btn-secondary w-full">회원가입</button></form><p className="muted mt-4 text-[11px] leading-relaxed">회원가입 시 Supabase 이메일 인증 설정에 따라 인증 메일이 발송될 수 있습니다.</p></div></div>}
   </div>;
