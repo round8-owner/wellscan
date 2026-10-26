@@ -153,7 +153,7 @@ export default function WellScanApp() {
         <div className="flex items-center gap-2">
           <Globe2 size={16} className="muted hidden sm:block"/>
           <select aria-label="UI language" className="field !w-auto max-w-[104px] !px-2 !py-2 text-xs sm:max-w-none sm:text-sm" value={lang} onChange={e => setLang(e.target.value as "ko"|"en")}><option value="ko">한국어</option><option value="en">English</option></select>
-          {userEmail ? <span className="hidden max-w-40 truncate text-xs text-gray-500 sm:inline">{userEmail}</span> : <button className="btn btn-secondary !min-h-10 !px-2 !py-2 text-[11px] sm:!px-3 sm:text-xs" onClick={() => setAuthOpen(true)}>{copy.signIn}</button>}
+          {userEmail ? <span className="hidden max-w-40 truncate text-xs text-gray-500 sm:inline">{userEmail}</span> : <button className="btn btn-secondary !min-h-10 !px-2 !py-2 text-[11px] sm:!px-3 sm:text-xs" onClick={() => setAuthOpen(true)}><span className="sm:hidden">{lang === "ko" ? "로그인" : "Sign in"}</span><span className="hidden sm:inline">{copy.signIn}</span></button>}
         </div>
       </div>
     </header>
